@@ -1,6 +1,7 @@
 package application;
 
 import javax.swing.*;
+import javax.swing.border.EtchedBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.NumberFormatter;
@@ -19,10 +20,7 @@ public class Main extends JFrame implements PropertyChangeListener{
 	private static final long serialVersionUID = 1L;
 	private float nalogCoefficent = 0.13f; // НДФЛ 13%
 	
-	//private JFrame frame = new JFrame("Калькулятор расcчета заработной платы");
 	private JPanel windowContent = new JPanel();
-	
-    //Formats to format and parse numbers
     
     //создаем шаблон форматирования
     private NumberFormatter nfFloat = new NumberFormatter(NumberFormat.getInstance()); // форматирование float
@@ -37,7 +35,7 @@ public class Main extends JFrame implements PropertyChangeListener{
 	private JFormattedTextField premiumTextField = new JFormattedTextField(new DefaultFormatterFactory(nfFloat));
 
 	// строка Районный коэффициент
-	private JLabel districtCoefficientLable = new JLabel("Районный коэффициент (если есть), %");
+	private JLabel districtCoefficientLable = new JLabel("Районный коэффициент (если есть)");
 	private JFormattedTextField districtCoefficientTextField = new JFormattedTextField(new DefaultFormatterFactory(nfFloat));
 	
 	// строка Количество рабочих дней 
@@ -78,7 +76,7 @@ public class Main extends JFrame implements PropertyChangeListener{
 
 	public Main() {
 		
-		super("Калькулятор расcчета заработной платы");
+		super("Калькулятор расчета заработной платы");
 		// Завершить работу программы при закрытии окна
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
@@ -103,6 +101,7 @@ public class Main extends JFrame implements PropertyChangeListener{
 		
 		// строка ввода Районный коэффициент
 		windowContent.add(districtCoefficientLable);
+		districtCoefficientTextField.setValue(1.0f);
 		windowContent.add(districtCoefficientTextField);
 		
 		// строка ввода Количество рабочих дней
@@ -144,12 +143,9 @@ public class Main extends JFrame implements PropertyChangeListener{
 				float casing = casingPair.u.floatValue();
 				float premium = premiumPair.u.floatValue();
 				
-				float districtCoefficient = 1.0f
-						+ districtCoefficientPair.u.floatValue() * 0.01f;
+				float districtCoefficient = districtCoefficientPair.u.floatValue();
 				int workDays = workDaysPair.u.intValue();
 				int spentDays = spentDaysPair.u.intValue();
-				
-				//System.out.println(Float.parseFloat(districtCoefficientTextField.getText())*10);
 				
 				//полная зарплата
 				float fullwage = getFullWage(casing, districtCoefficient, premium, workDays, spentDays);
@@ -205,17 +201,19 @@ public class Main extends JFrame implements PropertyChangeListener{
      */
     private Pair<Boolean, Number> CheckField(JFormattedTextField textField) {
     	
+    	Pair<Boolean, Number> pair = new Pair<>(false,-1);
+    	if(textField.getValue() == null) return pair;
     	Number number = ((Number) textField.getValue()).floatValue(); // преобразуем для проверки
-    	Pair<Boolean, Number> pair = new Pair<>(false,number);
     	
     	if(number.floatValue()>0) {
     		
-    		textField.setBorder(new LineBorder(Color.black,1)); // окрашиваем рамку черным
+    		textField.setBorder(new EtchedBorder(null, Color.gray)); // окрашиваем рамку серым
+    		pair.u = number;
     		pair.t = true;
     		
     	}
     	else 
-    		textField.setBorder(new LineBorder(Color.red,1)); // окрашиваем рамку красным
+    		textField.setBorder(new LineBorder(Color.red,2)); // окрашиваем рамку красным
     	return pair;
     }
     
